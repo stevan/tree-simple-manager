@@ -1,0 +1,21 @@
+Revision history for Perl extension Tree-Simple-Manager.
+
+0.02 Thurs Jan 13 2005
+    * Tree::Simple::Manager
+        + added the 'tree_parse_filter' field for configs
+            - added tests for this
+            - added docs for this
+        - updated the docs for new() to include descriptions
+          of the fields available
+          
+    * Tree::Simple::Manager::Index
+        - added the indexTree() method to allow for easier
+          customization of indexing through subclassing
+            - added docs for this
+
+    * Tree::Simple::Manager::Exceptions
+        + added Tree::Simple::Manager::IncorrectObjectType
+
+0.01 Mon Jan 10 01:01:17 2005
+    - module created
+
