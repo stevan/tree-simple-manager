@@ -41,13 +41,9 @@ sub _init {
 
         $self->{trees}->{$tree_name} = {};
     
-        my $root_tree = $config->{tree_root};
-        (blessed($root_tree) && $root_tree->isa('Tree::Simple'))
-            || throw Tree::Simple::Manager::IncorrectObjectType "The 'root_tree' must be a Tree::Simple instance (or a subclass of it)";
-        
+
         # load from the file or something
-        my $tree = $self->_loadTree($config);
-        
+        my $tree = $self->_loadTree($tree_name => $config);    
         
         # by default we use our Index module
         
@@ -78,16 +74,20 @@ sub _init {
 }
 
 sub _loadTree {
-    my ($self, $config) = @_;
+    my ($self, $tree_name, $config) = @_;
 
-    (exists ${$config}{tree_file_path})
+    (exists $config->{tree_file_path})
         || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
+
+        my $root_tree = $config->{tree_root};
+        (blessed($root_tree) && $root_tree->isa('Tree::Simple'))
+            || throw Tree::Simple::Manager::IncorrectObjectType "The 'root_tree' must be a Tree::Simple instance (or a subclass of it)";
     
     my $tree;
     eval {
         my $tp = Tree::Parser->new($config->{tree_root});
         $tp->setInput($config->{tree_file_path});
-        if (exists ${$config}{tree_parse_filter}) {
+        if (exists $config->{tree_parse_filter}) {
             (ref($config->{tree_parse_filter}) eq 'CODE')
                 || throw Tree::Simple::Manager::IncorrectObjectType "a 'tree_parse_filter' must be a code ref";
             $tp->setParseFilter(
