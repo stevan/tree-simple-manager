@@ -1,5 +1,9 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
+0.03
+    * Tree::Simple::Manager
+      - added some methods to make subclassing more flexible
+
 0.02 Thurs Jan 13 2005
     * Tree::Simple::Manager
         + added the 'tree_parse_filter' field for configs
