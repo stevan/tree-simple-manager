@@ -41,6 +41,9 @@ sub _init {
 
         $self->{trees}->{$tree_name} = {};
     
+        my $root_tree = $config->{tree_root};
+        (blessed($root_tree) && $root_tree->isa('Tree::Simple'))
+            || throw Tree::Simple::Manager::IncorrectObjectType "The 'root_tree' must be a Tree::Simple instance (or a subclass of it)";    
 
         # load from the file or something
         my $tree = $self->_loadTree($tree_name => $config);    
@@ -78,10 +81,6 @@ sub _loadTree {
 
     (exists $config->{tree_file_path})
         || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
-
-        my $root_tree = $config->{tree_root};
-        (blessed($root_tree) && $root_tree->isa('Tree::Simple'))
-            || throw Tree::Simple::Manager::IncorrectObjectType "The 'root_tree' must be a Tree::Simple instance (or a subclass of it)";
     
     my $tree;
     eval {
