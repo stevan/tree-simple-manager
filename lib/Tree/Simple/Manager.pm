@@ -33,7 +33,7 @@ sub _init {
     while (@{$tree_configs}) {
         my ($tree_name, $config) = splice @{$tree_configs}, 0, 2;
         
-        (exists ${$config}{tree_root} && ${$config}{tree_file_path})
+        (exists ${$config}{tree_root})
             || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
         
         (!exists ${$self->{trees}}{$tree_name})
@@ -79,6 +79,10 @@ sub _init {
 
 sub _loadTree {
     my ($self, $config) = @_;
+
+    (exists ${$config}{tree_file_path})
+        || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
+    
     my $tree;
     eval {
         my $tp = Tree::Parser->new($config->{tree_root});
