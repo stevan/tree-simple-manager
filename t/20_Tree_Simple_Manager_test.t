@@ -147,7 +147,7 @@ can_ok('Tree::Simple::Manager', 'new');
     } "Tree::Simple::Manager::InsufficientArguments", '... this should die';    
 
     throws_ok {
-        Tree::Simple::Manager->new('Fail' => { tree_root => 1 });
+        Tree::Simple::Manager->new('Fail' => { tree_root => Tree::Simple->new() });
     } "Tree::Simple::Manager::InsufficientArguments", '... this should die';    
     
     throws_ok {
