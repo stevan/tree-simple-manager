@@ -45,24 +45,9 @@ sub _init {
         (blessed($root_tree) && $root_tree->isa('Tree::Simple'))
             || throw Tree::Simple::Manager::IncorrectObjectType "The 'root_tree' must be a Tree::Simple instance (or a subclass of it)";
         
-        my $tree;
-        eval {
-            my $tp = Tree::Parser->new($root_tree);
-            $tp->setInput($config->{tree_file_path});
-            if (exists ${$config}{tree_parse_filter}) {
-                (ref($config->{tree_parse_filter}) eq 'CODE')
-                    || throw Tree::Simple::Manager::IncorrectObjectType "a 'tree_parse_filter' must be a code ref";
-                $tp->setParseFilter($self->_parseFilterWrapper(ref($root_tree) => $config->{tree_parse_filter}));
-            }
-            else {
-                $tp->setParseFilter($self->_getDefaultParseFilter(ref($root_tree)));
-            }
-            $tp->parse();
-            $tree = $tp->getTree();
-        };
-        if ($@) {
-            throw Tree::Simple::Manager::OperationFailed "unable to parse tree file '" . $config->{tree_file_path}. "'" => $@;
-        }
+        # load from the file or something
+        my $tree = $self->_loadTree($config);
+        
         
         # by default we use our Index module
         
@@ -90,6 +75,38 @@ sub _init {
             
         $self->{trees}->{$tree_name}->{view} = $tree_view;
     }
+}
+
+sub _loadTree {
+    my ($self, $config) = @_;
+    my $tree;
+    eval {
+        my $tp = Tree::Parser->new($config->{tree_root});
+        $tp->setInput($config->{tree_file_path});
+        if (exists ${$config}{tree_parse_filter}) {
+            (ref($config->{tree_parse_filter}) eq 'CODE')
+                || throw Tree::Simple::Manager::IncorrectObjectType "a 'tree_parse_filter' must be a code ref";
+            $tp->setParseFilter(
+                $self->_parseFilterWrapper(
+                    ref($config->{tree_root}), 
+                    $config->{tree_parse_filter}
+                )
+            );
+        }
+        else {
+            $tp->setParseFilter(
+                $self->_getDefaultParseFilter(
+                    ref($config->{tree_root})
+                )
+            );
+        }
+        $tp->parse();
+        $tree = $tp->getTree();
+    };
+    if ($@) {
+        throw Tree::Simple::Manager::OperationFailed "unable to parse tree file '" . $config->{tree_file_path}. "'" => $@;
+    }    
+    return $tree;
 }
 
 sub _parseFilterWrapper {
