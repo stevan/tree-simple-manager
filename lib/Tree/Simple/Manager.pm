@@ -15,6 +15,8 @@ use Tree::Parser;
 
 use Tree::Simple;
 use Tree::Simple::View::DHTML;
+
+use Storable ();
     
 sub new {
     my ($_class, @tree_configs) = @_;
@@ -78,6 +80,22 @@ sub _init {
 
 sub _loadTree {
     my ($self, $tree_name, $config) = @_;
+    
+    if (exists $config->{tree_cache_path} && -e $config->{tree_cache_path}) {
+        my $tree;
+        eval {
+            $tree = Storable::retrieve($config->{tree_cache_path});
+        };
+        if ($@) {
+            warn "Unable to load tree cache, removing cache tree";
+            unlink $config->{tree_cache_path};
+            warn "Attempting to load tree with parser";
+        }    
+        else {
+            $self->{trees_loaded_from_cache}->{$tree_name}++;
+            return $tree;        
+        }
+    }
 
     (exists $config->{tree_file_path})
         || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
@@ -109,6 +127,16 @@ sub _loadTree {
     if ($@) {
         throw Tree::Simple::Manager::OperationFailed "unable to parse tree file '" . $config->{tree_file_path}. "'" => $@;
     }    
+    
+    if (exists $config->{tree_cache_path}) {
+        eval {
+            Storable::store($tree, $config->{tree_cache_path});
+        };
+        if ($@) {
+            warn "Unable to store tree cache ... sorry";
+        }    
+    }    
+    
     return $tree;
 }
 
@@ -181,6 +209,12 @@ sub getNewTreeView {
     my ($self, $tree_name, @view_args) = @_;
     my $tree_view_class = $self->getTreeViewClass($tree_name);
     return $tree_view_class->new($self->getRootTree($tree_name), @view_args);
+}
+
+sub isTreeLoadedFromCache {
+    my ($self, $tree_name) = @_;
+    exists $self->{trees_loaded_from_cache}->{$tree_name} && 
+           $self->{trees_loaded_from_cache}->{$tree_name};
 }
 
 1;
@@ -307,6 +341,10 @@ This will return the Tree::Simple::View class associated with C<$tree_name>.
 =item B<getNewTreeView ($tree_name, @view_args)>
 
 This will return an instance of the Tree::Simple::View class associated with C<$tree_name>, passing in the C<@view_args> to the view constructor.
+
+=item B<isTreeLoadedFromCache ($tree_name)>
+
+This will return true if the tree has been loaded from cache with the tree_cache_path option.
 
 =back
 

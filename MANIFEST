@@ -8,6 +8,7 @@ lib/Tree/Simple/Manager/Index.pm
 t/10_Tree_Simple_Manager_test.t
 t/20_Tree_Simple_Manager_test.t
 t/30_Tree_Simple_Manager_Index_test.t
+t/40_Tree_Simple_Manager_storable.t
 t/pod.t
 t/pod_coverage.t
 t/test.tree
