@@ -1,11 +1,12 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
-0.03
+0.03 Mon. March 19, 2007
     * Tree::Simple::Manager
       + added some methods to make subclassing more flexible
       + added the tree_cache_path option to optionally store
         a parsed tree using Storable
         - added tests for this
+        - added docs for this
 
 0.02 Thurs Jan 13 2005
     * Tree::Simple::Manager
