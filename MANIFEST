@@ -1,5 +1,7 @@
 Changes
 Makefile.PL
+META.yml
+Build.PL
 MANIFEST
 README
 lib/Tree/Simple/Manager.pm
