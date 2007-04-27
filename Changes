@@ -1,6 +1,6 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
-0.04
+0.04 Fri. April 27, 2007
     * Tree::Simple::Manager
       + added support for Tree metadata
     * Tree::Simple::WithMetaData
@@ -14,7 +14,7 @@ Revision history for Perl extension Tree-Simple-Manager.
         - added tests for this
         - added docs for this
 
-0.02 Thurs Jan 13 2005
+0.02 Thurs Jan 13, 2005
     * Tree::Simple::Manager
         + added the 'tree_parse_filter' field for configs
             - added tests for this

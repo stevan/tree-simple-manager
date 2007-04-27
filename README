@@ -1,4 +1,4 @@
-Tree::Simple::Manager version 0.03
+Tree::Simple::Manager version 0.04
 ===========================
 
 See the individual module documentation for more information
@@ -16,15 +16,15 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-    Tree::Simple 1.14
-    Tree::Parser 0.09
-    Tree::Simple::View 0.11
-    Class::Throwable 0.10
+    Tree::Simple
+    Tree::Parser
+    Tree::Simple::View
+    Class::Throwable
     Storable
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2004 Infinity Interactive, Inc.
+Copyright (C) 2004-2007 Infinity Interactive, Inc.
 
 http://www.iinteractive.com
 
