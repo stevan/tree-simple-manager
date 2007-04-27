@@ -14,13 +14,15 @@ use Class::Throwable qw(
     Tree::Simple::Manager::IncorrectObjectType
     Tree::Simple::Manager::OperationFailed
     Tree::Simple::Manager::IncorrectObjectType
-    );
+);
 
 $Class::Throwable::DEFAULT_VERBOSITY = 2;
 
 1;
 
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -68,7 +70,7 @@ stevan little, E<lt>stevan@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004 by Infinity Interactive, Inc.
+Copyright 2004-2007 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 

@@ -6,7 +6,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Tree::Simple::Manager::Index;
 use Tree::Simple::Manager::Exceptions;
@@ -35,10 +35,10 @@ sub _init {
     while (@{$tree_configs}) {
         my ($tree_name, $config) = splice @{$tree_configs}, 0, 2;
         
-        (exists ${$config}{tree_root})
+        (exists $config->{tree_root})
             || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
         
-        (!exists ${$self->{trees}}{$tree_name})
+        (!exists $self->{trees}->{$tree_name})
             || throw Tree::Simple::Manager::DuplicateName "The tree '$tree_name' already exists";
 
         $self->{trees}->{$tree_name} = {};
@@ -53,7 +53,7 @@ sub _init {
         # by default we use our Index module
         
         my $tree_index_module;;
-        if (exists ${$config}{tree_index}) {
+        if (exists $config->{tree_index}) {
             ($config->{tree_index}->isa('Tree::Simple::Manager::Index')) 
                 || throw Tree::Simple::Manager::IncorrectObjectType "the 'tree_index' must be a subclass of Tree::Simple::Manager::Index";
             $tree_index_module = $config->{tree_index};
@@ -64,8 +64,19 @@ sub _init {
         
         $self->{trees}->{$tree_name}->{index} = $tree_index_module->new($tree);
         
+        if (exists $config->{tree_meta_data}) {
+            (ref $config->{tree_meta_data} eq 'HASH')
+                || throw Tree::Simple::Manager::IncorrectObjectType "the 'tree_meta_data' option must be a HASH";        
+            foreach my $tree_id (keys %{$config->{tree_meta_data}}) {                
+                my $tree = $self->{trees}->{$tree_name}->{index}->getTreeByID($tree_id);
+                ($tree->isa('Tree::Simple::WithMetaData'))
+                    || throw Tree::Simple::Manager::IncorrectObjectType "the 'tree_meta_data' node for ($tree_name) id($tree_id) must be a Tree::Simple::WithMetaData instance";                    
+                $tree->addMetaData(%{$config->{tree_meta_data}->{$tree_id}});
+            }
+        }
+        
         my $tree_view;
-        if (exists ${$config}{tree_view}) {
+        if (exists $config->{tree_view}) {
             ($config->{tree_view}->isa('Tree::Simple::View')) 
                 || throw Tree::Simple::Manager::IncorrectObjectType "the 'tree_view' must be a subclass of Tree::Simple::View";        
             $tree_view = $config->{tree_view};
@@ -167,17 +178,14 @@ sub _getDefaultParseFilter {
 
 sub getTreeList {
     my ($self) = @_;
-    return wantarray ?
-                keys %{$self->{trees}}
-                :
-                [ keys %{$self->{trees}} ];                
+    return wantarray ? keys %{$self->{trees}} : [ keys %{$self->{trees}} ];                
 }
 
 sub getRootTree {
     my ($self, $tree_name) = @_;
     (defined($tree_name)) 
         || throw Tree::Simple::Manager::InsufficientArguments "Tree name not specified";
-    (exists ${$self->{trees}}{$tree_name}) 
+    (exists $self->{trees}->{$tree_name}) 
         || throw Tree::Simple::Manager::KeyDoesNotExist "tree ($tree_name) does not exist"; 
     return $self->{trees}->{$tree_name}->{index}->getRootTree();             
 }
@@ -186,7 +194,7 @@ sub getTreeIndex {
     my ($self, $tree_name) = @_;
     (defined($tree_name)) 
         || throw Tree::Simple::Manager::InsufficientArguments "Tree name not specified";
-    (exists ${$self->{trees}}{$tree_name}) 
+    (exists $self->{trees}->{$tree_name}) 
         || throw Tree::Simple::Manager::KeyDoesNotExist "tree ($tree_name) does not exist";
     return $self->{trees}->{$tree_name}->{index};             
 }
@@ -200,7 +208,7 @@ sub getTreeViewClass {
     my ($self, $tree_name) = @_;
     (defined($tree_name)) 
         || throw Tree::Simple::Manager::InsufficientArguments "Tree name not specified";
-    (exists ${$self->{trees}}{$tree_name}) 
+    (exists $self->{trees}->{$tree_name}) 
         || throw Tree::Simple::Manager::KeyDoesNotExist "tree ($tree_name) does not exist";
     return $self->{trees}->{$tree_name}->{view}; 
 }
@@ -220,6 +228,8 @@ sub isTreeLoadedFromCache {
 1;
 
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -347,6 +357,12 @@ tree. It serializes the tree using Storable and then if a valid cache
 file is present, it will us that instead of re-parsing. This can 
 potentially save a B<lot> of time during startup for large trees.
 
+=item I<tree_meta_data>
+
+This is a HASH ref whose keys are tree ids (fetchable through 
+Tree::Simple::Manager::Index) and then accompanying metadata (which 
+can pretty much be anything actually). 
+
 =back
 
 =item B<getTreeList>
@@ -386,27 +402,6 @@ the tree_cache_path option.
 
 =back
 
-=head1 TO DO
-
-=over 4
-
-=item I<A bunch of stuff>
-
-This is the second release of this module. I wrote it a while 
-ago for a specific project, and decided it was useful outside of 
-that project as well. I am sure this can be expanded much further, 
-and I am sure I will discover ways to do that as I use it more 
-and more. 
-
-Suggestions, comments and even patches are always welcome.
-
-=item I<Support the pre-built filters of Tree::Parser>
-
-Tree::Parser has a number of pre-built filters, I would like be able 
-to take advantage of them with this module.
-
-=back
-
 =head1 BUGS
 
 None that I am aware of. Of course, if you find a bug, let me know, 
@@ -419,6 +414,8 @@ and I will be sure to fix it.
 =item L<Tree::Parser>
 
 =item L<Tree::Simple>
+
+=item L<Tree::Simple::WithMetaData>
 
 =item L<Tree::Simple::View::DHTML>
 

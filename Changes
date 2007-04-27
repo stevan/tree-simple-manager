@@ -1,5 +1,11 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
+0.04
+    * Tree::Simple::Manager
+      + added support for Tree metadata
+    * Tree::Simple::WithMetaData
+      + added tree subclass which handles metadata
+
 0.03 Mon. March 19, 2007
     * Tree::Simple::Manager
       + added some methods to make subclassing more flexible

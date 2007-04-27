@@ -6,7 +6,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
     
 use Tree::Simple::Manager::Exceptions;    
     
@@ -34,7 +34,7 @@ sub indexTree {
     my ($self) = @_;
     $self->{root_tree}->traverse(sub {
         my ($tree) = @_;
-        (!exists ${$self->{index}}{$tree->getUID()}) 
+        (!exists $self->{index}->{$tree->getUID()}) 
             || throw Tree::Simple::Manager::IllegalOperation "tree (" . $tree->getUID() . ") already exists in the index, cannot add a duplicate";        
         $self->{index}->{$tree->getUID()} = $tree;
     });
@@ -50,7 +50,7 @@ sub getIndexKeys {
 
 sub getTreeByID {
     my ($self, $id) = @_;
-    (exists ${$self->{index}}{$id}) 
+    (exists $self->{index}->{$id}) 
         || throw Tree::Simple::Manager::KeyDoesNotExist "tree ($id) does not exist in the index";        
     return $self->{index}->{$id};
 }
@@ -58,6 +58,8 @@ sub getTreeByID {
 1;
 
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -130,7 +132,7 @@ stevan little, E<lt>stevan@iinteractive.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004 by Infinity Interactive, Inc.
+Copyright 2004-2007 by Infinity Interactive, Inc.
 
 L<http://www.iinteractive.com>
 
