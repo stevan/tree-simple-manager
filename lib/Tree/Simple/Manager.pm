@@ -6,7 +6,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Tree::Simple::Manager::Index;
 use Tree::Simple::Manager::Exceptions;
@@ -52,7 +52,7 @@ sub _init {
         
         # by default we use our Index module
         
-        my $tree_index_module;;
+        my $tree_index_module;
         if (exists $config->{tree_index}) {
             ($config->{tree_index}->isa('Tree::Simple::Manager::Index')) 
                 || throw Tree::Simple::Manager::IncorrectObjectType "the 'tree_index' must be a subclass of Tree::Simple::Manager::Index";

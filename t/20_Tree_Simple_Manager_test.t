@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 51;
+use Test::More tests => 60;
 use Test::Exception;
 
 BEGIN {
@@ -19,8 +19,12 @@ can_ok('Tree::Simple::Manager', 'new');
         'Test Tree' => {
             tree_root      => Tree::Simple->new(Tree::Simple->ROOT),
             tree_file_path => "t/test.tree"
-            }
-        );
+        },
+        'Test Tree 2' => {
+            tree_root      => Tree::Simple->new(Tree::Simple->ROOT),
+            tree_file_path => "t/test2.tree"
+        },        
+    );
     isa_ok($tree_manager, 'Tree::Simple::Manager');
     
     can_ok($tree_manager, 'getTreeList');
@@ -31,13 +35,13 @@ can_ok('Tree::Simple::Manager', 'new');
     can_ok($tree_manager, 'getNewTreeView');    
     
     is_deeply(
-        [ $tree_manager->getTreeList() ],
-        [ 'Test Tree' ],
+        [ sort $tree_manager->getTreeList() ],
+        [ 'Test Tree', 'Test Tree 2' ],
         '... got the right list');
     
     is_deeply(
-        scalar $tree_manager->getTreeList(),
-        [ 'Test Tree' ],
+        [ sort @{scalar $tree_manager->getTreeList()} ],
+        [ 'Test Tree', 'Test Tree 2' ],
         '... got the right list');
     
     my $tree;
@@ -47,6 +51,15 @@ can_ok('Tree::Simple::Manager', 'new');
     ok(defined($tree), '... got a tree back');
     isa_ok($tree, 'Tree::Simple');
     
+    my $tree2;
+    lives_ok {
+        $tree2 = $tree_manager->getRootTree("Test Tree 2");
+    } '... got the root tree ok';
+    ok(defined($tree2), '... got a tree back');
+    isa_ok($tree2, 'Tree::Simple');    
+    
+    isnt($tree, $tree2, '... got different roots for different trees');
+    
     my $II_I_I;
     lives_ok {
         $II_I_I = $tree_manager->getTreeByID('Test Tree' => 8);
@@ -54,12 +67,25 @@ can_ok('Tree::Simple::Manager', 'new');
     isa_ok($II_I_I, 'Tree::Simple');
     is($II_I_I->getNodeValue(), 'II.I.I', '... got the right node');
     
+    throws_ok {
+        $tree_manager->getTreeByID('Test Tree 2' => 8);
+    } "Tree::Simple::Manager::KeyDoesNotExist", '... got the exception ok';
+    
     my $tree_index;
     lives_ok {
         $tree_index = $tree_manager->getTreeIndex("Test Tree");
     } '... got the tree index back ok';
     isa_ok($tree_index, 'Tree::Simple::Manager::Index');
     is($tree_index->getRootTree(), $tree, '... and it is the same as we expected');
+    
+    my $tree_index2;
+    lives_ok {
+        $tree_index2 = $tree_manager->getTreeIndex("Test Tree 2");
+    } '... got the tree index back ok';
+    isa_ok($tree_index2, 'Tree::Simple::Manager::Index');
+    is($tree_index2->getRootTree(), $tree2, '... and it is the same as we expected');    
+    
+    isnt($tree_index, $tree_index2, '... got different roots for different trees indicies');    
     
     my $tree_view_class;
     lives_ok {
