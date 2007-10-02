@@ -1,7 +1,11 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
-0.05
+0.05 Tues. Oct. 2, 2007
     ~ added some more tests ...
+    
+    * Tree::Simple::Manager
+      + added support for tree_file_encoding 
+        which works with Tree::Parser 0.15
 
 0.04 Fri. April 27, 2007
     * Tree::Simple::Manager

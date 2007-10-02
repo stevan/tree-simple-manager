@@ -114,7 +114,12 @@ sub _loadTree {
     my $tree;
     eval {
         my $tp = Tree::Parser->new($config->{tree_root});
+        
+        $tp->setFileEncoding($config->{tree_file_encoding}) 
+            if exists $config->{tree_file_encoding};
+            
         $tp->setInput($config->{tree_file_path});
+        
         if (exists $config->{tree_parse_filter}) {
             (ref($config->{tree_parse_filter}) eq 'CODE')
                 || throw Tree::Simple::Manager::IncorrectObjectType "a 'tree_parse_filter' must be a code ref";
@@ -362,6 +367,11 @@ potentially save a B<lot> of time during startup for large trees.
 This is a HASH ref whose keys are tree ids (fetchable through 
 Tree::Simple::Manager::Index) and then accompanying metadata (which 
 can pretty much be anything actually). 
+
+=item I<tree_file_encoding>
+
+This will pass on the encoding type to be used when reading in the 
+file with Tree::Parser.
 
 =back
 
