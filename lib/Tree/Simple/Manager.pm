@@ -16,6 +16,8 @@ use Tree::Parser;
 use Tree::Simple;
 use Tree::Simple::View::DHTML;
 
+use File::stat;
+
 use Storable ();
     
 sub new {
@@ -91,26 +93,31 @@ sub _init {
 
 sub _loadTree {
     my ($self, $tree_name, $config) = @_;
-    
-    if (exists $config->{tree_cache_path} && -e $config->{tree_cache_path}) {
-        my $tree;
-        eval {
-            $tree = Storable::retrieve($config->{tree_cache_path});
-        };
-        if ($@) {
-            warn "Unable to load tree cache, removing cache tree";
-            unlink $config->{tree_cache_path};
-            warn "Attempting to load tree with parser";
-        }    
-        else {
-            $self->{trees_loaded_from_cache}->{$tree_name}++;
-            return $tree;        
-        }
-    }
 
     (exists $config->{tree_file_path})
         || throw Tree::Simple::Manager::InsufficientArguments "missing the required keys for '$tree_name' config";
-    
+
+    if (exists $config->{tree_cache_path}) {
+        my $cache_stat = stat $config->{tree_cache_path};
+        my $file_stat = stat $config->{tree_file_path};
+
+        if ( $file_stat and $cache_stat and $cache_stat->mtime >= $file_stat->mtime ) {
+            my $tree;
+            eval {
+                $tree = Storable::retrieve($config->{tree_cache_path});
+            };
+            if ($@) {
+                warn "Unable to load tree cache, removing cache tree";
+                unlink $config->{tree_cache_path};
+                warn "Attempting to load tree with parser";
+            }    
+            else {
+                $self->{trees_loaded_from_cache}->{$tree_name}++;
+                return $tree;        
+            }
+        }
+    }
+
     my $tree;
     eval {
         my $tp = Tree::Parser->new($config->{tree_root});
@@ -140,6 +147,7 @@ sub _loadTree {
         $tp->parse();
         $tree = $tp->getTree();
     };
+
     if ($@) {
         throw Tree::Simple::Manager::OperationFailed "unable to parse tree file '" . $config->{tree_file_path}. "'" => $@;
     }    

@@ -11,6 +11,7 @@ my $build = Module::Build->new(
         'Tree::Parser'       => 0.15,
         'Tree::Simple::View' => 0.11,
         'Class::Throwable'   => 0.10,
+        'File::stat'         => 0,
         'Storable'           => 0,                
     },
     optional => {
