@@ -6,7 +6,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Tree::Simple::Manager::Index;
 use Tree::Simple::Manager::Exceptions;

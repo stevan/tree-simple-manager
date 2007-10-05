@@ -1,5 +1,11 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
+0.06 Fri. Oct. 5, 2007
+    * Tree::Simple::Manager
+      + tree cache now auto-expires if the tree file is 
+        newer then the cache file (thanks to nothingmuch)   
+        - added tests for this
+
 0.05 Tues. Oct. 2, 2007
     ~ added some more tests ...
     
