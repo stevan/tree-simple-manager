@@ -1,6 +1,6 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
-0.07 
+0.07 Mon. Nov. 5, 2007
     * Tree::Simple::Manager::Index
       - added the hasTreeAtID method 
         - added tests and docs for this
