@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 18;
+use Test::More tests => 20;
 use Test::Exception;
 
 BEGIN {
@@ -76,6 +76,9 @@ isa_ok($tree, 'Tree::Simple');
 
     is($tree, $index->getRootTree(), '... getting the root gives us the correct object');    
     is($test_tree, $index->getTreeByID(9), '... fetching number 9 gives us the correct object');
+    
+    ok($index->hasTreeAtID(1), '... got tree we expected');
+    ok(!$index->hasTreeAtID(20), '... no tree as expected');    
     
     throws_ok {
         $index->getTreeByID(20);

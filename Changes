@@ -1,5 +1,10 @@
 Revision history for Perl extension Tree-Simple-Manager.
 
+0.07 
+    * Tree::Simple::Manager::Index
+      - added the hasTreeAtID method 
+        - added tests and docs for this
+
 0.06 Fri. Oct. 5, 2007
     * Tree::Simple::Manager
       + tree cache now auto-expires if the tree file is 

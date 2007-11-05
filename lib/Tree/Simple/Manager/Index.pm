@@ -6,7 +6,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
     
 use Tree::Simple::Manager::Exceptions;    
     
@@ -55,6 +55,11 @@ sub getTreeByID {
     return $self->{index}->{$id};
 }
 
+sub hasTreeAtID {
+    my ($self, $id) = @_;
+    exists $self->{index}->{$id} ? 1 : 0  
+}
+
 1;
 
 __END__
@@ -99,6 +104,10 @@ This will return the root of the indexed tree.
 =item B<getTreeByID ($id)>
 
 Given an C<$id> this will return the tree associated with it. If no tree is associated with it, an exeception will be thrown.
+
+=item B<hasTreeAtID ($id)>
+
+Returns a boolean if there is a tree associated with that C<$id>.
 
 =back
 
