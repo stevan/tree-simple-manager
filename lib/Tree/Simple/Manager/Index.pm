@@ -123,8 +123,6 @@ You will need to override the C<indexTree> method. The root tree is accessible b
 
 We throw an exception in the default indexer if we notice a duplicate key being created. It is the responsibility of the subclass author to check.
 
-=item 
-
 =back
 
 =head1 BUGS
